@@ -1,0 +1,32 @@
+@font-face {
+  font-family: 'Leotaro';
+  src: local('LeotaroRegular'),
+      local('Leotaro-Regular'),
+      url('../fonts/LeotaroRegular.woff2') format('woff2'),
+      url('../fonts/LeotaroRegular.woff') format('woff');
+  font-display: swap;
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src:  local('RobotoLight'),
+        local('Roboto-Light'),
+        url('../fonts/RobotoLight.woff2') format('woff2'),
+        url('../fonts/RobotoLight.woff') format('woff');
+  font-display: swap;
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src:  local('RobotoRegular'),
+        local('Roboto-Regular'),
+        url('../fonts/RobotoRegular.woff2') format('woff2'),
+        url('../fonts/RobotoRegular.woff') format('woff');
+  font-display: swap;
+  font-weight: 400;
+  font-style: normal;
+}

@@ -1,0 +1,33 @@
+@media(min-width: 769px) {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar {
+    position: fixed;
+    z-index: 5;
+    top: 0;
+    right: 0;
+    display: block;
+    width: 12px;
+    height: 100vh;
+    background-color: transparent;
+  }
+
+  .scrollbar__thumb {
+    position: absolute;
+    z-index: 6;
+    right: 3px;
+    display: block;
+    width: 10px;
+    height: 48px;
+    background-color: var(--less-dark);
+    border-radius: 9px;
+    transition: opacity 0.15s ease-in-out;
+    opacity: 0;
+  }
+}
+
+.scrollbar:hover .scrollbar__thumb {
+  opacity: 0.5;
+}

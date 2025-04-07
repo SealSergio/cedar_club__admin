@@ -1,0 +1,33 @@
+.btn-up {
+  display: none;
+  position: fixed;
+  z-index: 8;
+  bottom: 25px;
+  right: 25px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 2s ease-in-out;
+  transition: display 2s ease-in-out;
+
+  & svg {
+    margin: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 100%;
+    background-color: var(--lighter);
+    transition: background-color 0.15s;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.7);
+  }
+
+  & path {
+    fill: var(--dark);
+  }
+}
+
+@media(min-width: 1023px) {
+  .btn-up {
+    display: none;
+  }
+}
