@@ -4,11 +4,11 @@ const { existsSync, readFileSync, writeFileSync } = require('fs');
 const { createServer } = require('http');
 
 // файл для базы данных
-const DB_FILE = process.env.DB_FILE || './db.json';
+const DB_FILE = process.env.DB_FILE || './lamps.json';
 // номер порта, на котором будет запущен сервер
 const PORT = process.env.PORT || 3000;
 // префикс URI для всех методов приложения
-const URI_PREFIX = '/api/clients';
+const URI_PREFIX = '/api/products';
 
 /**
  * Класс ошибки, используется для отправки ответа с определённым кодом и описанием ошибки
