@@ -86,6 +86,7 @@
 
 .card-rotate {
   position: absolute;
+  top: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -98,14 +99,29 @@
 }
 
 .card-rotate-front {
+  position: relative;
   padding: 15px;
   padding-bottom: 5px;
   background-image: url(../img/products/table.jpg);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  cursor: pointer;
   transition: box-shadow 0.2s ease-in-out;
+}
+
+.front__btn {
+  position: absolute;
+  z-index: 15;
+  right: 15px;
+  min-width: 40px;
+
+  &_delete {
+    top: 15px;
+  }
+
+  &_edit {
+    top: 60px;
+  }
 }
 
 .card-rotate-back {
@@ -151,7 +167,6 @@
   background-color: var(--light);
 }
 
-.card-rotate-front:hover .product-title-light,
 .product-title-light:hover, .product-title-light:active {
   background-color: var(--lighter);
 }
@@ -163,10 +178,10 @@
   padding: 10px 11px 6px;
   border: 1px solid var(--less-dark);
   color: var(--dark);
-}
 
-.product-title-dark:hover, .product-title-dark:active {
-  background-color: var(--lighter);
+  &:hover, &:active {
+    background-color: var(--lighter);
+  }
 }
 
 .product-card-text {

@@ -51,9 +51,9 @@ document.addEventListener('mouseup', () => {
 
 scrollbar.addEventListener('mousemove', (e) => {
   if (isDragging) {
-    const scrollbarRect = scrollbar.getBoundingClientRect();
+    const scrollbarRect = scrollbar.getBoundingProductRect();
     const scrollableHeight = document.body.scrollHeight;
-    let newY = e.clientY - scrollbarRect.top - 48;
+    let newY = e.productY - scrollbarRect.top - 48;
     newY = Math.max(0, Math.min(newY, scrollbarRect.height - 48));
     thumb.style.top = `${newY}px)`;
     window.scrollTo({

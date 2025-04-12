@@ -1,3 +1,6 @@
+import { flipOver, slide } from './_animateCard.js';
+import { deleteProduct, editProduct } from './_changeProduct.js';
+
 export function createCard(productData, productsList) {
   const productCard = document.createElement('li');
   productCard.classList.add('product-card');
@@ -58,7 +61,7 @@ export function createCard(productData, productsList) {
   back.append(productInfo);
 
   function createCardText(text) {
-    const productCardText = document.createElement('p');
+    const productCardText = document.createElement('h4');
     productCardText.classList.add('basic-text', 'product-card-text');
     productCardText.innerHTML = productData[text];
     productInfo.append(productCardText);
@@ -78,47 +81,24 @@ export function createCard(productData, productsList) {
   productTitleDark.innerHTML = productData.name;
   productBtnBack.append(productTitleDark);
 
-  flipOver(front, productBtnBack, cardInner);
+  createEditButtons(front, productData.id);
+
+  flipOver(productBtnFront, productBtnBack, cardInner);
   slide(slider, prevButton, nextButton);
 };
 
-function flipOver(front, productBtnBack, cardInner) {
-  front.addEventListener('click', () => {
-    cardInner.classList.toggle('is-flipped');
-  });
+function createEditButtons(front, id) {
+  const btnDelete = document.createElement('button');
+  btnDelete.classList.add('btn-more', 'front__btn', 'front__btn_delete');
+  btnDelete.textContent = 'Delete';
+  const btnEdit = document.createElement('button');
+  btnEdit.classList.add('btn-more', 'front__btn', 'front__btn_edit');
+  btnEdit.textContent = 'Edit';
 
-  productBtnBack.addEventListener('click', () => {
-    cardInner.classList.toggle('is-flipped');
-  });
+  front.append(btnDelete, btnEdit);
+
+  btnDelete.addEventListener('click', () => deleteProduct(id));
+  btnEdit.addEventListener('click', () => editProduct(id));
+
+  // btnArchive.addEventListener('click', archiveProduct(id));
 }
-
-function slide(slider, prevButton, nextButton) {
-  const slides = Array.from(slider.querySelectorAll('.product-img'));
-  const slideCount = slides.length;
-  let slideIndex = 0;
-
-  prevButton.addEventListener('click', showPreviousSlide);
-  nextButton.addEventListener('click', showNextSlide);
-
-  function showPreviousSlide() {
-    slideIndex = (slideIndex - 1 + slideCount) % slideCount;
-    updateSlider();
-  }
-
-  function showNextSlide() {
-    slideIndex = (slideIndex + 1) % slideCount;
-    updateSlider();
-  }
-
-  function updateSlider() {
-    slides.forEach((slide, index) => {
-      if (index === slideIndex) {
-        slide.style.display = 'block';
-      } else {
-        slide.style.display = 'none';
-      }
-    });
-  }
-
-  updateSlider();
-};
