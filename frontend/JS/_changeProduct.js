@@ -108,7 +108,7 @@ export async function editProduct(id) {
     });
 
     modal.btnCancel.addEventListener('click', async (e) => {
-        if (confirm('Вы действительно хотите удалить данного клиента?')) {
+        if (confirm('Вы действительно хотите удалить данное изделие?')) {
             const deleteProductData = await data.deleteProductData(productObj.id);
             if (deleteProductData.ok) {
                 const productsDataArray = await data.getProductsDataArray();

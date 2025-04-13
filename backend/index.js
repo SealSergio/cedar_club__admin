@@ -3,11 +3,8 @@
 const { existsSync, readFileSync, writeFileSync } = require('fs');
 const { createServer } = require('http');
 
-// файл для базы данных
-const DB_FILE = process.env.DB_FILE || './lamps.json';
-// номер порта, на котором будет запущен сервер
+const DB_FILE = process.env.DB_FILE || './db.json';
 const PORT = process.env.PORT || 3000;
-// префикс URI для всех методов приложения
 const URI_PREFIX = '/api/products';
 
 /**
@@ -43,9 +40,9 @@ function drainJson(req) {
  * Проверяет входные данные и создаёт из них корректный объект клиента
  * @param {Object} data - Объект с входными данными
  * @throws {ApiError} Некорректные данные в аргументе (statusCode 422)
- * @returns {{ name: string, surname: string, lastName: string, contacts: object[] }} Объект клиента
+ * @returns {{ id: string, name: string, title: string, details1: string, details2: string, details3: string, imgCounter: string, attribute: string }} Объект клиента
  */
-function makeClientFromData(data) {
+function makeProductFromData(data) {
   const errors = [];
 
   function asString(v) {
@@ -53,60 +50,65 @@ function makeClientFromData(data) {
   }
 
   // составляем объект, где есть только необходимые поля
-  const client = {
+  const product = {
+    id: asString(data.id),
     name: asString(data.name),
-    surname: asString(data.surname),
-    lastName: asString(data.lastName),
-    contacts: Array.isArray(data.contacts) ? data.contacts.map(contact => ({
-      type: asString(contact.type),
-      value: asString(contact.value),
-    })) : [],
+    title: asString(data.title),
+    details1: asString(data.details1),
+    details2: asString(data.details2),
+    details3: asString(data.details3),
+    imgCounter: asString(data.imgCounter),
+    attribute: asString(data.attribute),
   };
 
-  // проверяем, все ли данные корректные и заполняем объект ошибок, которые нужно отдать клиенту
-  if (!client.name) errors.push({ field: 'name', message: 'Не указано имя' });
-  if (!client.surname) errors.push({ field: 'surname', message: 'Не указана фамилия' });
-  if (client.contacts.some(contact => !contact.type || !contact.value))
-    errors.push({ field: 'contacts', message: 'Не все добавленные контакты полностью заполнены' });
+  // // проверяем, все ли данные корректные и заполняем объект ошибок, которые нужно отдать клиенту
+  // if (!product.name) errors.push({ field: 'name', message: 'Не указано имя' });
+  // if (!product.surname) errors.push({ field: 'surname', message: 'Не указана фамилия' });
+  // if (product.contacts.some(contact => !contact.type || !contact.value))
+  //   errors.push({ field: 'contacts', message: 'Не все добавленные контакты полностью заполнены' });
 
-  // если есть ошибки, то бросаем объект ошибки с их списком и 422 статусом
-  if (errors.length) throw new ApiError(422, { errors });
+  // // если есть ошибки, то бросаем объект ошибки с их списком и 422 статусом
+  // if (errors.length) throw new ApiError(422, { errors });
 
-  return client;
+  return product;
 }
 
 /**
  * Возвращает список клиентов из базы данных
  * @param {{ search: string }} [params] - Поисковая строка
- * @returns {{ id: string, name: string, surname: string, lastName: string, contacts: object[] }[]} Массив клиентов
+ * @returns {{ id: string, name: string, title: string, details1: string, details2: string, details3: string, imgCounter: string, attribute: string }[]} Массив клиентов
  */
-function getClientList(params = {}) {
-  const clients = JSON.parse(readFileSync(DB_FILE) || '[]');
+function getProductList(params = {}) {
+  const products = JSON.parse(readFileSync(DB_FILE) || '[]');
   if (params.search) {
     const search = params.search.trim().toLowerCase();
-    return clients.filter(client => [
-        client.name,
-        client.surname,
-        client.lastName,
-        ...client.contacts.map(({ value }) => value)
+    return products.filter(product => [
+      product.id,
+      product.name,
+      product.title,
+      product.details1,
+      product.details2,
+      product.details3,
+      product.imgCounter,
+      product.attribute,
       ]
         .some(str => str.toLowerCase().includes(search))
     );
   }
-  return clients;
+  return products;
 }
 
 /**
  * Создаёт и сохраняет клиента в базу данных
  * @throws {ApiError} Некорректные данные в аргументе, клиент не создан (statusCode 422)
  * @param {Object} data - Данные из тела запроса
- * @returns {{ id: string, name: string, surname: string, lastName: string, contacts: object[], createdAt: string, updatedAt: string }} Объект клиента
+ * @returns {{ id: string, name: string, title: string, details1: string, details2: string, details3: string, imgCounter: string, attribute: string, createdAt: string, updatedAt: string }}
  */
-function createClient(data) {
-  const newItem = makeClientFromData(data);
+function createProduct(data) {
+  const newItem = makeProductFromData(data);
   newItem.id = Date.now().toString();
   newItem.createdAt = newItem.updatedAt = new Date().toISOString();
-  writeFileSync(DB_FILE, JSON.stringify([...getClientList(), newItem]), { encoding: 'utf8' });
+  writeFileSync(DB_FILE, JSON.stringify([...getProductList(), newItem]), { encoding: 'utf8' });
   return newItem;
 }
 
@@ -114,30 +116,30 @@ function createClient(data) {
  * Возвращает объект клиента по его ID
  * @param {string} itemId - ID клиента
  * @throws {ApiError} Клиент с таким ID не найден (statusCode 404)
- * @returns {{ id: string, name: string, surname: string, lastName: string, contacts: object[], createdAt: string, updatedAt: string }} Объект клиента
+ * @returns {{ id: string, name: string, title: string, details1: string, details2: string, details3: string, imgCounter: string, attribute: string, createdAt: string, updatedAt: string }} Объект клиента
  */
-function getClient(itemId) {
-  const client = getClientList().find(({ id }) => id === itemId);
-  if (!client) throw new ApiError(404, { message: 'Client Not Found' });
-  return client;
+function getProduct(itemId) {
+  const product = getProductList().find(({ id }) => id === itemId);
+  if (!product) throw new ApiError(404, { message: 'Product Not Found' });
+  return product;
 }
 
 /**
  * Изменяет клиента с указанным ID и сохраняет изменения в базу данных
  * @param {string} itemId - ID изменяемого клиента
- * @param {{ name?: string, surname?: string, lastName?: string, contacts?: object[] }} data - Объект с изменяемыми данными
+ * @param {{ id?: string, name?: string, title?: string, details1?: string, details2?: string, details3?: string, imgCounter?: string, attribute?: string }} data - Объект с изменяемыми данными
  * @throws {ApiError} Клиент с таким ID не найден (statusCode 404)
  * @throws {ApiError} Некорректные данные в аргументе (statusCode 422)
- * @returns {{ id: string, name: string, surname: string, lastName: string, contacts: object[], createdAt: string, updatedAt: string }} Объект клиента
+ * @returns {{ id: string, name: string, title: string, details1: string, details2: string, details3: string, imgCounter: string, attribute: string, createdAt: string, updatedAt: string }} Объект клиента
  */
-function updateClient(itemId, data) {
-  const clients = getClientList();
-  const itemIndex = clients.findIndex(({ id }) => id === itemId);
-  if (itemIndex === -1) throw new ApiError(404, { message: 'Client Not Found' });
-  Object.assign(clients[itemIndex], makeClientFromData({ ...clients[itemIndex], ...data }));
-  clients[itemIndex].updatedAt = new Date().toISOString();
-  writeFileSync(DB_FILE, JSON.stringify(clients), { encoding: 'utf8' });
-  return clients[itemIndex];
+function updateProduct(itemId, data) {
+  const products = getProductList();
+  const itemIndex = products.findIndex(({ id }) => id === itemId);
+  if (itemIndex === -1) throw new ApiError(404, { message: 'Product Not Found' });
+  Object.assign(products[itemIndex], makeProductFromData({ ...products[itemIndex], ...data }));
+  products[itemIndex].updatedAt = new Date().toISOString();
+  writeFileSync(DB_FILE, JSON.stringify(products), { encoding: 'utf8' });
+  return products[itemIndex];
 }
 
 /**
@@ -145,12 +147,12 @@ function updateClient(itemId, data) {
  * @param {string} itemId - ID клиента
  * @returns {{}}
  */
-function deleteClient(itemId) {
-  const clients = getClientList();
-  const itemIndex = clients.findIndex(({ id }) => id === itemId);
-  if (itemIndex === -1) throw new ApiError(404, { message: 'Client Not Found' });
-  clients.splice(itemIndex, 1);
-  writeFileSync(DB_FILE, JSON.stringify(clients), { encoding: 'utf8' });
+function deleteProduct(itemId) {
+  const products = getProductList();
+  const itemIndex = products.findIndex(({ id }) => id === itemId);
+  if (itemIndex === -1) throw new ApiError(404, { message: 'Product Not Found' });
+  products.splice(itemIndex, 1);
+  writeFileSync(DB_FILE, JSON.stringify(products), { encoding: 'utf8' });
   return {};
 }
 
@@ -201,22 +203,22 @@ module.exports = createServer(async (req, res) => {
     // обрабатываем запрос и формируем тело ответа
     const body = await (async () => {
       if (uri === '' || uri === '/') {
-        // /api/clients
-        if (req.method === 'GET') return getClientList(queryParams);
+        // /api/products
+        if (req.method === 'GET') return getProductList(queryParams);
         if (req.method === 'POST') {
-          const createdItem = createClient(await drainJson(req));
+          const createdItem = createProduct(await drainJson(req));
           res.statusCode = 201;
           res.setHeader('Access-Control-Expose-Headers', 'Location');
           res.setHeader('Location', `${URI_PREFIX}/${createdItem.id}`);
           return createdItem;
         }
       } else {
-        // /api/clients/{id}
+        // /api/products/{id}
         // параметр {id} из URI запроса
         const itemId = uri.substr(1);
-        if (req.method === 'GET') return getClient(itemId);
-        if (req.method === 'PATCH') return updateClient(itemId, await drainJson(req));
-        if (req.method === 'DELETE') return deleteClient(itemId);
+        if (req.method === 'GET') return getProduct(itemId);
+        if (req.method === 'PATCH') return updateProduct(itemId, await drainJson(req));
+        if (req.method === 'DELETE') return deleteProduct(itemId);
       }
       return null;
     })();
@@ -234,20 +236,17 @@ module.exports = createServer(async (req, res) => {
     }
   }
 })
-  // выводим инструкцию, как только сервер запустился...
   .on('listening', () => {
     if (process.env.NODE_ENV !== 'test') {
-      console.log(`Сервер CRM запущен. Вы можете использовать его по адресу http://localhost:${PORT}`);
-      console.log('Нажмите CTRL+C, чтобы остановить сервер');
+      console.log(`\nСервер запущен. Вы можете использовать его по адресу http://localhost:${PORT}`);
+      console.log('Нажмите CTRL+C, чтобы остановить сервер.\n');
       console.log('Доступные методы:');
-      console.log(`GET ${URI_PREFIX} - получить список клиентов, в query параметр search можно передать поисковый запрос`);
-      console.log(`POST ${URI_PREFIX} - создать клиента, в теле запроса нужно передать объект { name: string, surname: string, lastName?: string, contacts?: object[] }`);
-      console.log(`\tcontacts - массив объектов контактов вида { type: string, value: string }`);
-      console.log(`GET ${URI_PREFIX}/{id} - получить клиента по его ID`);
-      console.log(`PATCH ${URI_PREFIX}/{id} - изменить клиента с ID, в теле запроса нужно передать объект { name?: string, surname?: string, lastName?: string, contacts?: object[] }`);
-      console.log(`\tcontacts - массив объектов контактов вида { type: string, value: string }`);
-      console.log(`DELETE ${URI_PREFIX}/{id} - удалить клиента по ID`);
+      console.log(`GET ${URI_PREFIX}`);
+      console.log(`POST ${URI_PREFIX}`);
+      console.log(`GET ${URI_PREFIX}/{id}`);
+      console.log(`PATCH ${URI_PREFIX}/{id}`);
+      console.log(`DELETE ${URI_PREFIX}/{id}\n`);
     }
   })
-  // ...и вызываем запуск сервера на указанном порту
+
   .listen(PORT);

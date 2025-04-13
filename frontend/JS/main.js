@@ -1,26 +1,20 @@
 import {createCard} from './_createCard.js';
+import {getProductsDataArray} from './_data.js';
 
-let data = {
-    url: '../database/',
-    async getSectionData(sectionTitle) {
-        return await fetch(`${this.url}${sectionTitle}.json`).then(res => res.json());
-    }
+async function renderCatalog() {
+    const catalogData = await getProductsDataArray();
+    const sectionsNames = ['lamps', 'tables', 'kitchens'];
+    sectionsNames.forEach(sectionName => {
+        const section = document.querySelector(`.${sectionName}`);
+        if (!section) return;
+        const sectionProductsList = section.querySelector('.products-list');
+        sectionProductsList.innerHTML = '';
+        const sectionData = catalogData.filter(product => product.id.includes(sectionName));
+        sectionData.forEach(productData => {
+            createCard(productData, sectionProductsList);
+        });
+    })
 };
-
-async function renderSection(sectionTitle) {
-    const section = document.getElementById('lamps');
-    const productsList = section.querySelector('.products-list');
-    productsList.innerHTML = '';
-    const productsArr = await data.getSectionData(sectionTitle);
-
-    productsArr.forEach(productData => {
-        createCard(productData, productsList);
-    });
-};
-
-function renderCatalog() {
-    renderSection('lamps');
-}
 
 renderCatalog();
 
