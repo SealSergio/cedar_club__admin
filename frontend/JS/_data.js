@@ -20,8 +20,8 @@ export async function addProductData(productObj) {
     });
 }
 
-export async function changeProductData(productObj) {
-    return await fetch(`${url}/${productObj.id}`, {
+export async function changeProductData(productObj, id) {
+    return await fetch(`${url}/${id}`, {
         method: 'PATCH',
         body: JSON.stringify(productObj),
         headers: {

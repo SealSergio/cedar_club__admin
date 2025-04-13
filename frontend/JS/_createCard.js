@@ -41,7 +41,7 @@ export function createCard(productData, productsList) {
     for (; imgCounter > 0; imgCounter--) {
         const img = document.createElement('img');
         img.classList.add('product-img');
-        img.setAttribute('src', `img/products/${productId}/0${imgCounter}.jpg`); // Сделать добавление ноля
+        img.setAttribute('src', `img/products/${productId}/0${imgCounter}.jpg`);
         img.setAttribute('alt', productData.attribute);
         slider.prepend(img);
     }

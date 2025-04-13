@@ -1,7 +1,8 @@
 import {createCard} from './_createCard.js';
 import {getProductsDataArray} from './_data.js';
+import {addProduct} from './_changeProduct.js';
 
-async function renderCatalog() {
+export async function renderCatalog() {
     const catalogData = await getProductsDataArray();
     const sectionsNames = ['lamps', 'tables', 'kitchens'];
     sectionsNames.forEach(sectionName => {
@@ -22,3 +23,7 @@ const btnAdd = document.createElement('button');
 btnAdd.classList.add('btn-more');
 btnAdd.innerHTML = 'Добавить изделие';
 document.body.appendChild(btnAdd);
+
+btnAdd.addEventListener('click', () => {
+    addProduct();
+});

@@ -1,4 +1,5 @@
 import {createModalWindow, closeModalWindow, createForm} from './_modalWindow.js';
+import {renderCatalog} from './main.js';
 import * as data from './_data.js';
 import * as hashFunctions from './_hash.js';
 
@@ -13,35 +14,22 @@ export function addProduct() {
 
     modal.btnSubmit.addEventListener('click', async e => {
         e.preventDefault();
-        const validation = validateForm(form.inputsArr);
-        if (validation.result) {
-            const contactsArr = [];
-            const currentcontacts = Array.from(form.contacts.querySelectorAll('.form__contacts__input'));
-            currentcontacts.forEach(input => {
-                const contactObj = {
-                    type: input.name,
-                    value: input.value,
-                }
-                contactsArr.push(contactObj)
-            });
-            const productObj = {
-                surname: form.inputsArr[0].value,
-                name: form.inputsArr[1].value,
-                lastName: form.inputsArr[2].value,
-                contacts: contactsArr,
-            };
+        const updatedProductObj = {
+            id: form.inputsArr[0].value,
+            name: form.inputsArr[1].value,
+            title: form.inputsArr[2].value,
+            details1: form.inputsArr[3].value,
+            details2: form.inputsArr[4].value,
+            details3: form.inputsArr[5].value,
+            imgCounter: form.inputsArr[6].value,
+            attribute: form.inputsArr[7].value,
+        };
 
-            const addProductData = await data.addProductData(productObj);
-            if (addProductData.ok) {
-                const productsDataArray = await data.getProductsDataArray();
-                closeModalWindow(modal.modalWindowWrapper);
-                renderTable(productsDataArray);
-            } else {
-                const serverError = ['Ошибка на сервере'];
-                showFormErrors(serverError, form.contacts, form.inputsArr);
-            };
-        } else {
-            showFormErrors(validation.errors, form.contacts, form.inputsArr);
+        const changeProductData = await data.addProductData(updatedProductObj);
+        if (changeProductData.ok) {
+            const productsDataArray = await data.getProductsDataArray();
+            closeModalWindow(modal.modalWindowWrapper);
+            renderCatalog(productsDataArray);
         }
     });
 
@@ -72,39 +60,23 @@ export async function editProduct(id) {
 
     modal.btnSubmit.addEventListener('click', async (e) => {
         e.preventDefault();
-        const validation = validateForm(form.inputsArr);
-        if (validation.result) {
-            const contactsArr = [];
-            const currentcontacts = Array.from(form.contacts.querySelectorAll('.form__contacts__input'));
-            currentcontacts.forEach(input => {
-                if (input.value) {
-                    const contactObj = {
-                        type: input.name,
-                        value: input.value,
-                    }
-                    contactsArr.push(contactObj)
-                }
-            });
-            const updatedProductObj = {
-                surname: form.inputsArr[0].value,
-                name: form.inputsArr[1].value,
-                lastName: form.inputsArr[2].value,
-                contacts: contactsArr,
-                id: productObj.id,
-            };
-
-            const changeProductData = await data.changeProductData(updatedProductObj);
-            if (changeProductData.ok) {
-                const productsDataArray = await data.getProductsDataArray();
-                closeModalWindow(modal.modalWindowWrapper);
-                renderTable(productsDataArray);
-            } else {
-                const serverError = ['Ошибка на сервере'];
-                showFormErrors(serverError, form.contacts, form.inputsArr);
-            };
-        } else {
-            showFormErrors(validation.errors, form.contacts, form.inputsArr);
+        const updatedProductObj = {
+            id: form.inputsArr[0].value,
+            name: form.inputsArr[1].value,
+            title: form.inputsArr[2].value,
+            details1: form.inputsArr[3].value,
+            details2: form.inputsArr[4].value,
+            details3: form.inputsArr[5].value,
+            imgCounter: form.inputsArr[6].value,
+            attribute: form.inputsArr[7].value,
         };
+
+        const changeProductData = await data.changeProductData(updatedProductObj, id);
+        if (changeProductData.ok) {
+            const productsDataArray = await data.getProductsDataArray();
+            closeModalWindow(modal.modalWindowWrapper);
+            renderCatalog(productsDataArray);
+        }
     });
 
     modal.btnCancel.addEventListener('click', async (e) => {
@@ -112,12 +84,9 @@ export async function editProduct(id) {
             const deleteProductData = await data.deleteProductData(productObj.id);
             if (deleteProductData.ok) {
                 const productsDataArray = await data.getProductsDataArray();
-                renderTable(productsDataArray);
+                renderCatalog(productsDataArray);
                 closeModalWindow(modal.modalWindowWrapper);
-            } else {
-                const serverError = ['Ошибка на сервере'];
-                showFormErrors(serverError, form.contacts, form.inputsArr);
-            };
+            }
         }
     });
 }
@@ -144,11 +113,8 @@ export function deleteProduct(id) {
         const deleteProductData = await data.deleteProductData(id);
         if (deleteProductData.ok) {
             const productsDataArray = await data.getProductsDataArray();
-            renderTable(productsDataArray);
+            renderCatalog(productsDataArray);
             closeModalWindow(modal.modalWindowWrapper);
-        } else {
-            const serverError = ['Ошибка на сервере'];
-            showFormErrors(serverError, deleteQuestion, null);
-        };
+        }
     });
 }

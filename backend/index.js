@@ -106,7 +106,6 @@ function getProductList(params = {}) {
  */
 function createProduct(data) {
   const newItem = makeProductFromData(data);
-  newItem.id = Date.now().toString();
   newItem.createdAt = newItem.updatedAt = new Date().toISOString();
   writeFileSync(DB_FILE, JSON.stringify([...getProductList(), newItem]), { encoding: 'utf8' });
   return newItem;
