@@ -92,6 +92,10 @@ export function createForm(modal, productObj) {
         form.append(lable);
     };
 
+    inputsArr[1].addEventListener('input', () => {
+        inputsArr[1].value = inputsArr[1].value.toUpperCase();
+    })
+
     inputsArr[6].type = 'number';
 
     modal.modalWindow.append(form);

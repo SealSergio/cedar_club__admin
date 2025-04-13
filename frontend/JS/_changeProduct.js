@@ -6,7 +6,7 @@ import * as hashFunctions from './_hash.js';
 export function addProduct() {
     const modal = createModalWindow();
     modal.modalWindow.classList.add('modal-window_big');
-    modal.modalWindowTitle.innerHTML = 'Новый клиент';
+    modal.modalWindowTitle.innerHTML = 'Новое изделие';
     modal.btnSubmit.innerHTML = 'Сохранить';
     modal.btnCancel.innerHTML = ' Отмена';
 
@@ -14,9 +14,14 @@ export function addProduct() {
 
     modal.btnSubmit.addEventListener('click', async e => {
         e.preventDefault();
+
+        if ((await data.getProductData(form.inputsArr[0].value)).response.ok || !form.inputsArr[0].value || !form.inputsArr[1].value || !form.inputsArr[2].value || !form.inputsArr[6].value || !form.inputsArr[7].value) {
+            return;
+        };
+
         const updatedProductObj = {
             id: form.inputsArr[0].value,
-            name: form.inputsArr[1].value,
+            name: form.inputsArr[1].value.toUpperCase(),
             title: form.inputsArr[2].value,
             details1: form.inputsArr[3].value,
             details2: form.inputsArr[4].value,
@@ -62,7 +67,7 @@ export async function editProduct(id) {
         e.preventDefault();
         const updatedProductObj = {
             id: form.inputsArr[0].value,
-            name: form.inputsArr[1].value,
+            name: form.inputsArr[1].value.toUpperCase(),
             title: form.inputsArr[2].value,
             details1: form.inputsArr[3].value,
             details2: form.inputsArr[4].value,
@@ -97,7 +102,7 @@ export function deleteProduct(id) {
     modal.modalWindowTitle.innerHTML = 'Удалить изделие';
     modal.modalWindowTitle.classList.add('modal-window__title--delete');
     const deleteQuestion = document.createElement('p');
-    deleteQuestion.innerHTML = 'Удалить это изделие?';
+    deleteQuestion.innerHTML = 'Вы действительно хотите удалить изделие? Действие необратимо.';
     deleteQuestion.classList.add('basic-text', 'modal-window__text--delete');
 
     modal.btnSubmit.innerHTML = 'Удалить';

@@ -4,7 +4,7 @@ import {addProduct} from './_changeProduct.js';
 
 export async function renderCatalog() {
     const catalogData = await getProductsDataArray();
-    const sectionsNames = ['lamps', 'tables', 'kitchens'];
+    const sectionsNames = ['lamps', 'tables', 'arm-chairs', 'beds', 'chests', 'another', 'carving', 'kitchens', 'doors', 'decoration'];
     sectionsNames.forEach(sectionName => {
         const section = document.getElementById(sectionName);
         if (!section) return;
@@ -25,10 +25,7 @@ export async function renderCatalog() {
 
 renderCatalog();
 
-const btnAdd = document.createElement('button');
-btnAdd.classList.add('btn-more');
-btnAdd.innerHTML = 'Добавить изделие';
-document.body.appendChild(btnAdd);
+const btnAdd = document.querySelector('.btn-add');
 
 btnAdd.addEventListener('click', () => {
     addProduct();

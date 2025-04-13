@@ -680,6 +680,7 @@ body.noscroll {
   position: relative;
   padding: 15px;
   padding-bottom: 5px;
+  background-color: var(--less-dark);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -832,6 +833,13 @@ body.noscroll {
   opacity: 100%;
 }
 
+.btn-add {
+  position: fixed;
+  right: 100px;
+  bottom: 60px;
+  box-shadow: 2px 1px 10px rgba(0, 0, 0, 0.5);
+}
+
 .modal-window-wrapper {
   position: fixed;
   top: 0;
@@ -856,7 +864,7 @@ body.noscroll {
   min-height: 300px;
 }
 .modal-window_big {
-  min-width: 500px;
+  min-width: 600px;
   min-height: 500px;
 }
 
