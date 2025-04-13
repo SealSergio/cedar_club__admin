@@ -575,6 +575,10 @@ ul {
   background-color: var(--less-dark);
 }
 
+body.noscroll {
+  overflow: hidden;
+}
+
 .section-catalog {
   margin-top: 80px;
   margin-bottom: 10px;
@@ -829,7 +833,7 @@ ul {
 }
 
 .modal-window-wrapper {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   display: block;

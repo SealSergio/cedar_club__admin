@@ -6,10 +6,16 @@ export async function renderCatalog() {
     const catalogData = await getProductsDataArray();
     const sectionsNames = ['lamps', 'tables', 'kitchens'];
     sectionsNames.forEach(sectionName => {
-        const section = document.querySelector(`.${sectionName}`);
+        const section = document.getElementById(sectionName);
         if (!section) return;
-        const sectionProductsList = section.querySelector('.products-list');
-        sectionProductsList.innerHTML = '';
+        let sectionProductsList = section.querySelector('.products-list');
+        if (sectionProductsList) {
+            sectionProductsList.innerHTML = '';
+        } else {
+            sectionProductsList = document.createElement('ul');
+            sectionProductsList.classList.add('products-list');
+            section.append(sectionProductsList);
+        };
         const sectionData = catalogData.filter(product => product.id.includes(sectionName));
         sectionData.forEach(productData => {
             createCard(productData, sectionProductsList);
